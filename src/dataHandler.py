@@ -4,11 +4,6 @@ import matplotlib.cm as cm
 import numpy as np
 
 
-
-
-# print  training_data[0][1]
-
-
 def guardarImagen(imagen, nombreArchivo = "digito.png"):
     plt.imsave(nombreArchivo, np.array(imagen).reshape(28,28), cmap=cm.gray)
 
