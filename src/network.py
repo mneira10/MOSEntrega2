@@ -15,17 +15,19 @@ simple, easily readable, and easily modifiable.  It is not optimized,
 and omits many desirable features.
 """
 
-#### Libraries
+# Libraries
 # Standard library
 import random
 
 # Third-party libraries
 import numpy as np
-import json, codecs
+import json
+import codecs
+
 
 class Network(object):
 
-    def __init__(self, sizes=[784,0,0]):
+    def __init__(self, sizes=[784, 0, 0]):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -41,9 +43,7 @@ class Network(object):
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
-
-  
-
+        self.fitness = 0.0
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -61,7 +61,8 @@ class Network(object):
         network will be evaluated against the test data after each
         epoch, and partial progress printed out.  This is useful for
         tracking progress, but slows things down substantially."""
-        if test_data: n_test = len(test_data)
+        if test_data:
+            n_test = len(test_data)
         n = len(training_data)
         for j in xrange(epochs):
             random.shuffle(training_data)
@@ -101,8 +102,8 @@ class Network(object):
         nabla_w = [np.zeros(w.shape) for w in self.weights]
         # feedforward
         activation = x
-        activations = [x] # list to store all the activations, layer by layer
-        zs = [] # list to store all the z vectors, layer by layer
+        activations = [x]  # list to store all the activations, layer by layer
+        zs = []  # list to store all the z vectors, layer by layer
         for b, w in zip(self.biases, self.weights):
             z = np.dot(w, activation)+b
             zs.append(z)
@@ -141,10 +142,8 @@ class Network(object):
         \partial a for the output activations."""
         return (output_activations-y)
 
-
-
-    def loadNetwork(self,nameOfNetwork):
-        #weights
+    def loadNetwork(self, nameOfNetwork):
+        # weights
         file_path = "./" + nameOfNetwork + ".nnw"
         obj_text = codecs.open(file_path, 'r', encoding='utf-8').read()
         w = json.loads(obj_text)
@@ -154,7 +153,7 @@ class Network(object):
             w[i] = np.array(w[i])
         self.weights = w
 
-        #biases
+        # biases
         file_path = "./" + nameOfNetwork + ".nnb"
         obj_text = codecs.open(file_path, 'r', encoding='utf-8').read()
         b = json.loads(obj_text)
@@ -164,32 +163,40 @@ class Network(object):
             b[i] = np.array(b[i])
         self.biases = b
 
-    def saveNetwork(self,nameOfNetwork):
-       
-        #weights
+    def saveNetwork(self, nameOfNetwork):
+
+        # weights
         file_path = "./" + nameOfNetwork + ".nnw"
 
         wc = self.weights[:]
-        for i in range(len(self.weights)): 
-            wc[i]= wc[i].tolist()
+        for i in range(len(self.weights)):
+            wc[i] = wc[i].tolist()
 
-        json.dump(wc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',', ':'), sort_keys=True, indent=4) ### this saves the array in .json format
-        
-        #biases
-        file_path = "./" + nameOfNetwork + ".nnb" 
+        json.dump(wc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',',
+                                                                                 ':'), sort_keys=True, indent=4)  # this saves the array in .json format
+
+        # biases
+        file_path = "./" + nameOfNetwork + ".nnb"
 
         bc = self.biases[:]
-        for i in range(len(self.biases)): 
-            bc[i]= bc[i].tolist()
+        for i in range(len(self.biases)):
+            bc[i] = bc[i].tolist()
 
-        json.dump(bc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',', ':'), sort_keys=True, indent=4) ### this saves the array in .json format
+        json.dump(bc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',',
+                                                                                 ':'), sort_keys=True, indent=4)  # this saves the array in .json format
+
+    def evaluateNormed(self, test_data):
+        fit = (self.evaluate(test_data)+0.0)/len(test_data)
+        self.fitness = fit
+        return self.fitness
+
+# Miscellaneous functions
 
 
-
-#### Miscellaneous functions
 def sigmoid(z):
     """The sigmoid function."""
     return 1.0/(1.0+np.exp(-z))
+
 
 def sigmoid_prime(z):
     """Derivative of the sigmoid function."""
