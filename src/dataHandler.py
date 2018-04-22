@@ -26,7 +26,7 @@ def mostrarImagenInd(ind):
 
 def darDigitoInd(ind):
     training_data, validation_data, test_data = mnist_loader.load_data_wrapper()
-    imagen = training_data[ind][1]
+    data = training_data[ind][1]
     return np.where(data==1)[0][0]
 
 def darDigito(vector):

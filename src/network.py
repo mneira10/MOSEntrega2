@@ -21,10 +21,11 @@ import random
 
 # Third-party libraries
 import numpy as np
+import json, codecs
 
 class Network(object):
 
-    def __init__(self, sizes):
+    def __init__(self, sizes=[784,0,0]):
         """The list ``sizes`` contains the number of neurons in the
         respective layers of the network.  For example, if the list
         was [2, 3, 1] then it would be a three-layer network, with the
@@ -40,6 +41,9 @@ class Network(object):
         self.biases = [np.random.randn(y, 1) for y in sizes[1:]]
         self.weights = [np.random.randn(y, x)
                         for x, y in zip(sizes[:-1], sizes[1:])]
+
+  
+
 
     def feedforward(self, a):
         """Return the output of the network if ``a`` is input."""
@@ -136,6 +140,51 @@ class Network(object):
         """Return the vector of partial derivatives \partial C_x /
         \partial a for the output activations."""
         return (output_activations-y)
+
+
+
+    def loadNetwork(self,nameOfNetwork):
+        #weights
+        file_path = "./" + nameOfNetwork + ".nnw"
+        obj_text = codecs.open(file_path, 'r', encoding='utf-8').read()
+        w = json.loads(obj_text)
+        w = np.array(w)
+
+        for i in range(len(w)):
+            w[i] = np.array(w[i])
+        self.weights = w
+
+        #biases
+        file_path = "./" + nameOfNetwork + ".nnb"
+        obj_text = codecs.open(file_path, 'r', encoding='utf-8').read()
+        b = json.loads(obj_text)
+        b = np.array(b)
+
+        for i in range(len(b)):
+            b[i] = np.array(b[i])
+        self.biases = b
+
+    def saveNetwork(self,nameOfNetwork):
+       
+        #weights
+        file_path = "./" + nameOfNetwork + ".nnw"
+
+        wc = self.weights[:]
+        for i in range(len(self.weights)): 
+            wc[i]= wc[i].tolist()
+
+        json.dump(wc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',', ':'), sort_keys=True, indent=4) ### this saves the array in .json format
+        
+        #biases
+        file_path = "./" + nameOfNetwork + ".nnb" 
+
+        bc = self.biases[:]
+        for i in range(len(self.biases)): 
+            bc[i]= bc[i].tolist()
+
+        json.dump(bc, codecs.open(file_path, 'w', encoding='utf-8'), separators=(',', ':'), sort_keys=True, indent=4) ### this saves the array in .json format
+
+
 
 #### Miscellaneous functions
 def sigmoid(z):
