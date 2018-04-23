@@ -56,13 +56,17 @@ def iterate(networks):
         temps.append(son1)
         temps.append(son2)
 
-    networks = np.array(networks)
+    # networks = np.array(networks)
     # uniq = list(set(chosen))
     # networks = np.delete(networks,uniq)
-    networks = networks[chosen]
+    # networks = networks[chosen]
     # print uniq
     # print len(networks)
-    networks = networks.tolist()
+    # networks = networks.tolist()
+
+    for i in range(int(0.4*len(networks))):
+        networks.pop(-1)
+
     for i  in temps:
         networks.append(i)
     # print(len(networks))
